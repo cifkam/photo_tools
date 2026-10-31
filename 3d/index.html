@@ -630,9 +630,14 @@ function update() {
       const at = (x, y) => new THREE.Vector3(x, y, 0).applyQuaternion(pose.quaternion).add(pose.position);
       const O = P.tiltPivot === 'base' ? at(0, -fh / 2) : pose.position.clone();
       const tAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(pose.quaternion), up = new THREE.Vector3(0, 1, 0);
+      // on the edges of the extended film and lens planes while they are shown (further out, so a turn takes a longer
+      // drag and is easier to set finely), otherwise on the standard's frame
+      const [hx, hy] = P.showPlanes ? [5 * fw / 2, 5 * fw * ih / iw / 2] : [fw / 2, fh / 2];
       for (const sg of [1, -1]) {
-        if (!(P.tiltPivot === 'base' && sg < 0)) turnHandles.push({ name: tKey + sg, key: tKey, std, centre: pose.position.clone(), p: at(0, sg * fh / 2), O, axis: tAxis });
-        turnHandles.push({ name: sKey + sg, key: sKey, std, centre: pose.position.clone(), p: at(sg * fw / 2, 0), O, axis: up });
+        // the bottom dot of the frame sits on the base pivot, where it would not move: left out then
+        if (!(P.tiltPivot === 'base' && sg < 0 && !P.showPlanes))
+          turnHandles.push({ name: tKey + sg, key: tKey, std, centre: pose.position.clone(), p: at(0, sg * hy), O, axis: tAxis });
+        turnHandles.push({ name: sKey + sg, key: sKey, std, centre: pose.position.clone(), p: at(sg * hx, 0), O, axis: up });
       }
     }
     const dots = new THREE.Points(new THREE.BufferGeometry().setFromPoints(turnHandles.map(h => h.p)), turnDotMat);
@@ -881,6 +886,7 @@ function update() {
   if (P.showPlanes) {
     // a rectangle in each standard's own plane, centred on it, with the format's aspect ratio and
     // 5× the frame width (≈ 1 m for 4x5), so the two patches are identical whatever the pitch
+    // (the turning handles sit on its edges then; keep their size in step with this)
     const pw = 5 * fw, ph = pw * ih / iw;
     for (const [pose, c] of [[rear, COL.film], [front, COL.lens]]) {
       const poly = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sy]) =>
@@ -1181,6 +1187,34 @@ if (matchMedia('(max-width: 700px)').matches) gui.close();   // phones: start wi
     if (!h) return;
     turnSpace.updateWorldMatrix(true, false);
     const O = world(h.O), Q = world(h.p), a = h.axis.clone().transformDirection(turnSpace.matrixWorld);
+    drag.val ??= P[h.key];   // the angle, unrounded through the drag
+    const apply = () => {
+      P[h.key] = Math.round(THREE.MathUtils.clamp(drag.val, -30, 30) * 100) / 100;
+      gui.controllersRecursive().forEach(c => c.updateDisplay());
+      update();
+    };
+    // The pointer's ray met with the plane the dot turns in (through the pivot, square to the axis): the standard turns
+    // by the angle the pointer has gone round the pivot in that plane since the drag began, so the dot stays on the
+    // line from the pivot to the pointer, and a move towards or away from the pivot turns nothing. Seen at a slant the
+    // circle is an ellipse on the screen, which this follows too. Only with that plane nearly edge on (where the
+    // meeting point runs off) does the dot follow the pointer's move across the screen instead, as below.
+    const onPlane = (x, y) => {   // where the pointer at (x, y) meets that plane, from the pivot; null when it does not
+      raycaster.setFromCamera(new THREE.Vector2(x / innerWidth * 2 - 1, 1 - y / innerHeight * 2), camera);
+      const ray = raycaster.ray, den = a.dot(ray.direction), t = a.dot(O.clone().sub(ray.origin)) / den;
+      if (!(Math.abs(den) > 0.2 && t > 0)) return null;
+      const r = ray.origin.clone().addScaledVector(ray.direction, t).sub(O);
+      return r.length() > 1e-4 ? r : null;   // (on the pivot: no direction)
+    };
+    const r = onPlane(e.clientX, e.clientY);
+    if (r) {
+      // measured from where the pointer was at the last switch to this way: the press, if it worked from the start
+      if (!drag.r0) { drag.r0 = onPlane(drag.x, drag.y) || r; drag.val0 = drag.val; }
+      drag.x = e.clientX; drag.y = e.clientY;
+      drag.val = drag.val0 + Math.atan2(a.dot(drag.r0.clone().cross(r)), drag.r0.dot(r)) * 180 / Math.PI;
+      apply();
+      return;
+    }
+    drag.r0 = null;
     const s0 = screenOf(Q), s1 = screenOf(Q.clone().addScaledVector(a.clone().cross(Q.clone().sub(O)), 1e-3));
     const vx = (s1[0] - s0[0]) / 1e-3, vy = (s1[1] - s0[1]) / 1e-3, vv = vx * vx + vy * vy;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
@@ -1192,9 +1226,8 @@ if (matchMedia('(max-width: 700px)').matches) gui.close();   // phones: start wi
     const lim = Math.hypot(dx, dy);
     const turn = THREE.MathUtils.clamp((dx * vx + dy * vy) / (vv + (full / 3) ** 2) * 180 / Math.PI, -lim, lim);   // right-handed about the axis: + for all four angles
     if (!Number.isFinite(turn)) return;
-    P[h.key] = Math.round(THREE.MathUtils.clamp(P[h.key] + turn, -30, 30) * 100) / 100;
-    gui.controllersRecursive().forEach(c => c.updateDisplay());
-    update();
+    drag.val += turn;
+    apply();
   });
   const end = () => { if (!drag) return; drag = null; renderer.domElement.style.cursor = ''; };
   renderer.domElement.addEventListener('pointerup', end);

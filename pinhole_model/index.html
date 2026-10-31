@@ -9,7 +9,10 @@
   :root { color-scheme: dark; }
   html, body { margin: 0; height: 100%; background: #1c1e22; color: #e6e6e6; font: 13px/1.5 system-ui, sans-serif; }
   body { overflow: hidden; }
-  #app { display: grid; grid-template-columns: minmax(0, 1fr) minmax(380px, 44%); height: 100%; }
+  /* the picture's share of the width (--side) is set by dragging the divider between the two */
+  #app { --side: 44%; display: grid; grid-template-columns: minmax(0, 1fr) 7px minmax(300px, var(--side)); height: 100%; }
+  #splitter { cursor: col-resize; touch-action: none; background: #26292e; border-left: 1px solid #33363c; border-right: 1px solid #33363c; }
+  #splitter:hover, #splitter.active { background: #3a3f47; }
   #world { position: relative; min-width: 0; overflow: hidden; }
   #world > canvas { display: block; touch-action: none; }
   #help3d { position: absolute; left: 10px; top: 8px; color: #9aa0a8; font-size: 12px; pointer-events: none; }
@@ -20,7 +23,7 @@
   #gui .lil-gui .controller.boolean { flex-direction: row-reverse; justify-content: flex-end; }
   #gui .lil-gui .controller.boolean .name { width: auto; min-width: 0; flex: 1 1 auto; }
   #gui .lil-gui .controller.boolean .widget { width: auto; flex: 0 0 auto; margin-right: 10px; }
-  #side { overflow-y: auto; border-left: 1px solid #33363c; padding: 10px 14px 24px; }
+  #side { overflow-y: auto; padding: 10px 14px 24px; }
   #imageWrap { position: relative; }
   #image { display: block; touch-action: none; margin: 0 auto; }
   .caption { color: #9aa0a8; font-size: 12px; margin: 4px 0 8px; }
@@ -45,6 +48,7 @@
   @media (max-width: 760px) {
     body { overflow: auto; }
     #app { display: block; height: auto; }
+    #splitter { display: none; }
     #world { height: 55vh; height: 55svh; }
     #side { border-left: 0; border-top: 1px solid #33363c; padding: 8px 10px 24px; overflow: visible; }
     #help3d .hint { display: none; }
@@ -64,6 +68,7 @@
     <div id="help3d"><span class="hint">drag: orbit · right-drag: pan · wheel: zoom · tap a vertex to follow it · drag the orange dot to move the image plane · </span><a href="../">all tools</a></div>
     <div id="gui"></div>
   </section>
+  <div id="splitter" title="drag to share the width"></div>
   <section id="side">
     <div id="imageWrap"><canvas id="image"></canvas></div>
     <div class="caption" id="caption"></div>
@@ -1002,6 +1007,27 @@ function update() {
 function layout() { resize3D(); drawImageView(); }
 showEntry();
 new ResizeObserver(layout).observe(worldEl);
+// the divider between the 3D view and the picture: dragging it sets the picture's share of the width, in per cent,
+// remembered in this browser
+{
+  const app = document.getElementById('app'), bar = document.getElementById('splitter'), KEY = 'projection.split';
+  const setSide = pc => app.style.setProperty('--side', Math.max(20, Math.min(75, pc)).toFixed(1) + '%');
+  try { const pc = parseFloat(localStorage.getItem(KEY)); if (pc) setSide(pc); } catch (e) { /* storage blocked */ }
+  let dragging = false;
+  bar.addEventListener('pointerdown', e => { dragging = true; bar.setPointerCapture(e.pointerId); bar.classList.add('active'); e.preventDefault(); });
+  bar.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const r = app.getBoundingClientRect();
+    setSide((r.right - e.clientX) / r.width * 100);
+  });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false; bar.classList.remove('active');
+    try { localStorage.setItem(KEY, parseFloat(app.style.getPropertyValue('--side'))); } catch (e) { /* ignore */ }
+  };
+  bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+  bar.addEventListener('dblclick', () => { app.style.removeProperty('--side'); try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } });
+}
 new ResizeObserver(() => drawImageView()).observe(document.getElementById('imageWrap'));
 update();
 resize3D();
