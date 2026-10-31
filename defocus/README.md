@@ -1,4 +1,4 @@
-# Defocus and blur circles
+# Thin lens: defocus blur visualisation
 
 A scene of simple objects photographed through a thin lens, showing how each point of it blurs: the light from a
 point fills a cone from the aperture to the point's sharp image, and the sensor cuts that cone in a circle, the

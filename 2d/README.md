@@ -1,4 +1,4 @@
-# Camera model (side view)
+# 2D thin lens: focus and depth of field, side view
 
 The 3D camera model reduced to the vertical plane through the lens axis: a side view of the
 camera with lens and film tilt, rise/fall, the plane of sharp focus, the depth-of-field wedge,

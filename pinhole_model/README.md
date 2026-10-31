@@ -1,4 +1,4 @@
-# Pinhole camera model
+# Pinhole camera: projection
 
 An interactive pinhole camera as computer vision models it: a 3D scene, the camera in it, and the image the camera
 records, with the intrinsics K, the pose [R | t], the projection matrix P = K [R | t] and the OpenCV lens distortion

@@ -1,20 +1,28 @@
 # Photo tools
 
-Interactive optics for photographers, as static web pages (no build step). Published with
-GitHub Pages; the root `index.html` links to the individual tools.
+Interactive camera optics, as static web pages (no build step): thin-lens models of focus, depth of field and blur,
+and the pinhole model of computer vision. Published with GitHub Pages; the root `index.html` links to the individual
+tools.
 
-- [`3d/`](3d/) – 3D model of a (view) camera: standards with tilt, swing, rise and shift, the plane of
-  sharp focus, depth of field, field of view, lens coverage and the Scheimpflug geometry.
+Thin lens:
+
+- [`3d/`](3d/) – **3D thin lens: focus and depth of field in 3D**: the plane of sharp focus, depth of field, field of
+  view and lens coverage; optionally a view camera with tilt, swing, rise and shift and the Scheimpflug geometry.
   See [`3d/README.md`](3d/README.md).
-- [`2d/`](2d/) – the side-view version: lens and film tilt in the vertical plane, the hinge and Scheimpflug points,
-  the depth-of-field wedge; the focus point and the hinge can be dragged (a visual Scheimpflug calculator).
-- [`pinhole_model/`](pinhole_model/) – the pinhole camera model of computer vision: intrinsics K, pose [R | t], the
-  projection matrix and OpenCV distortion, with a 3D scene and its image. Self-contained apart from the shared favicon and
-  the link back to the start page. See [`pinhole_model/README.md`](pinhole_model/README.md).
-- [`defocus/`](defocus/) – a thin lens photographing a 3D scene: each point's light cone, the blur circle the sensor
-  cuts from it, the depth of field, and the blurred picture. Self-contained like `pinhole_model/`. See [`defocus/README.md`](defocus/README.md).
+- [`2d/`](2d/) – **2D thin lens: focus and depth of field, side view**: the same in the vertical plane, with lens and
+  film tilt, the hinge and Scheimpflug points and the depth-of-field wedge; the focus point and the hinge can be
+  dragged (a visual Scheimpflug calculator).
+- [`defocus/`](defocus/) – **Thin lens: defocus blur visualisation**: a thin lens photographing a 3D scene, each
+  point's light cone, the blur the sensor cuts from it, the depth of field and the blurred picture. Self-contained
+  apart from the shared favicon and the link back to the start page. See [`defocus/README.md`](defocus/README.md).
 - [`calculators/`](calculators/) – calculators and tables (depth of field with draggable charts, hyperfocal and
   DoF tables); the formulas are in `calculators/optics.js`. See [`calculators/README.md`](calculators/README.md).
+
+Pinhole:
+
+- [`pinhole_model/`](pinhole_model/) – **Pinhole camera: projection**: the pinhole camera model of computer vision,
+  intrinsics K, pose [R | t], the projection matrix and OpenCV distortion, with a 3D scene and its image.
+  Self-contained like `defocus/`. See [`pinhole_model/README.md`](pinhole_model/README.md).
 
 ## Checks
 

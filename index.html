@@ -16,6 +16,7 @@
   a.tool:hover { border-color: #4fa8ff; }
   a.tool h2 { font-size: 17px; margin: 0 0 4px; color: #4fa8ff; }
   a.tool p { margin: 0; color: #c8ccd4; }
+  h2.group { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9aa0a8; margin: 30px 0 10px; }
   footer { color: #70757e; font-size: 13px; margin-top: 32px; }
   footer a { color: #9aa0a8; }
 </style>
@@ -23,36 +24,36 @@
 <body>
 <main>
   <h1>Photo tools</h1>
-  <p class="lead">Interactive optics for photographers.</p>
+  <p class="lead">Interactive camera optics: thin-lens models of focus, depth of field and blur, and the pinhole model of
+     computer vision.</p>
+
+  <h2 class="group">Thin lens</h2>
 
   <a class="tool" href="3d/">
-    <h2>3D camera model</h2>
-    <p>A view camera in 3D: standards with tilt, swing, rise and shift, the plane of sharp focus, depth of field,
-       field of view, lens coverage and the Scheimpflug geometry, all live as you move the sliders.</p>
+    <h2>3D thin lens: focus and depth of field in 3D</h2>
+    <p>The plane of sharp focus, depth of field and field of view of a camera, optionally with view camera movements.</p>
   </a>
 
   <a class="tool" href="2d/">
-    <h2>2D camera model (side view)</h2>
-    <p>The same camera seen from the side: lens tilt, the hinge and Scheimpflug points, the plane of sharp focus and the
-       depth-of-field wedge, with the focus point and the hinge draggable. A Scheimpflug calculator you can see.</p>
-  </a>
-
-  <a class="tool" href="pinhole_model/">
-    <h2>Pinhole camera model</h2>
-    <p>Camera projection as computer vision models it: a 3D scene, the camera in it and the image it records, with the
-       intrinsics K, the pose [R | t], the projection matrix P and the OpenCV lens distortion, all live.</p>
+    <h2>2D thin lens: focus and depth of field, side view</h2>
+    <p>The plane of sharp focus and the depth-of-field wedge in a side view, with lens tilt and the Scheimpflug rule.</p>
   </a>
 
   <a class="tool" href="defocus/">
-    <h2>Defocus and blur circles</h2>
-    <p>A scene through a thin lens: the light cone of each point from the aperture to its sharp image, the blur
-       circle the sensor cuts from it, the depth of field, and the picture with every line blurred by its own circle.</p>
+    <h2>Thin lens: defocus blur visualisation</h2>
+    <p>How each point of a scene blurs when out of focus, from the light cone behind the lens to the blurred picture.</p>
   </a>
 
   <a class="tool" href="calculators/">
     <h2>Calculators &amp; tables</h2>
-    <p>Depth of field with draggable charts, hyperfocal and depth-of-field tables, the aperture from the focus spread,
-       format equivalents, reciprocity failure and development time vs temperature.</p>
+    <p>Depth of field, hyperfocal distance, format equivalents, reciprocity failure and development times.</p>
+  </a>
+
+  <h2 class="group">Pinhole</h2>
+
+  <a class="tool" href="pinhole_model/">
+    <h2>Pinhole camera: projection</h2>
+    <p>Camera projection as in computer vision: intrinsics, pose, projection matrix and lens distortion.</p>
   </a>
 
   <footer>Source on <a href="https://github.com/cifkam/photo_tools">GitHub</a>.</footer>
