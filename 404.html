@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Photo tools</title>
-<link rel="icon" href="/photo_tools/favicon.ico">
+<title>Camera tools</title>
+<link rel="icon" href="/camera_tools/favicon.ico">
 <style>
   :root { color-scheme: dark; }
   html, body { margin: 0; background: #1c1e22; color: #e6e6e6; font: 15px/1.5 system-ui, sans-serif; }
@@ -18,7 +18,7 @@
   (function () {
     var dirs = ['3d', '2d', 'calculators', 'pinhole_model', 'defocus'];
     var parts = location.pathname.split('/').filter(Boolean);
-    var root = parts.length && parts[0].toLowerCase() === 'photo_tools' ? 1 : 0;   // project site prefix
+    var root = parts.length && parts[0].toLowerCase() === 'camera_tools' ? 1 : 0;   // project site prefix
     var seg = parts[root] || '';
     for (var i = 0; i < dirs.length; i++) {
       if (seg.toLowerCase() === dirs[i].toLowerCase() && seg !== dirs[i]) {
@@ -33,7 +33,7 @@
 <body>
 <main>
   <h1>Page not found</h1>
-  <p>Nothing lives at this address. All the tools are on the <a href="/photo_tools/">start page</a>.</p>
+  <p>Nothing lives at this address. All the tools are on the <a href="/camera_tools/">start page</a>.</p>
 </main>
 </body>
 </html>

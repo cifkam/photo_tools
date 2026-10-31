@@ -1,4 +1,4 @@
-# Photo tools
+# Calculators & tables
 
 Calculators and tables for photographers, as a single static page: `calculators/index.html`. No build
 step; open the file in a browser or publish it with the rest of the repository.

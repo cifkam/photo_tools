@@ -1,4 +1,4 @@
-# Photo tools
+# Camera tools
 
 Interactive camera optics, as static web pages (no build step): thin-lens models of focus, depth of field and blur,
 and the pinhole model of computer vision. Published with GitHub Pages; the root `index.html` links to the individual
